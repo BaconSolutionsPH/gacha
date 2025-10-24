@@ -1,11 +1,11 @@
 import * as p from 'drizzle-orm/pg-core'
-import type { Hex } from 'viem'
+import { t } from 'elysia'
 
 export const userSchema = p.pgTable('users', {
     id: p.uuid().primaryKey().defaultRandom(),
     walletAddress: p.text().notNull().unique(),
     tier: p.text({ enum: ['bronze', 'silver', 'gold', 'platinum', 'class_a', 'class_s', 'class_s+'] }).default('bronze'),
-    userType: p.text({ enum: ['player', 'seller', 'admin'] }).notNull(),
+    userType: p.text({ enum: ['player', 'seller', 'admin'] }).default('player'),
     isVerified: p.boolean().default(false),
     createdAt: p.timestamp().defaultNow().notNull(),
     updatedAt: p.timestamp().defaultNow().notNull(),
@@ -26,7 +26,8 @@ export const cardSchema = p.pgTable('cards', {
     name: p.text().notNull(),
     description: p.text(),
     serialNumber: p.text(),
-    images: p.jsonb().$type<string[]>(),
+    category: p.text().notNull(),
+    images: p.jsonb().$type<string[]>(), 
     grade: p.numeric({ mode: "number", precision: 5, scale: 2 }),
     grader: p.text({ enum: ['psa', 'bgs', 'cgc', 'none'] }),
     createdAt: p.timestamp().defaultNow().notNull(),
