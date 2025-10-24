@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAccount, useSignMessage, useDisconnect } from 'wagmi'
 import { authApi } from '@/lib/api'
 import { useUserStore } from '@/stores'
-import type { LoginRequest, UseAuthReturn, UseUserReturn } from '@/types'
+import type { LoginRequest, UseAuthReturn } from '@/types'
 
 export const useAuth = (): UseAuthReturn => {
   const { user, setUser, clearUser, setAuthToken, fetchUser, authToken } = useUserStore()
@@ -115,32 +115,5 @@ Issued At: ${issuedAt}`
     logout,
     isConnected,
     address,
-  }
-}
-
-export const useUser = (): UseUserReturn => {
-  const { user, isLoading, error, isAuthenticated, fetchUser, clearUser, authToken } = useUserStore()
-
-  // Auto-fetch user data when component mounts if we have a token
-  useEffect(() => {
-    if (authToken && !user && !isLoading) {
-      fetchUser()
-    }
-  }, [fetchUser, user, isLoading, authToken])
-
-  const refetch = async () => {
-    if (authToken) {
-      await fetchUser()
-    }
-  }
-
-  return {
-    user,
-    isLoading,
-    error,
-    isAuthenticated,
-    fetchUser,
-    clearUser,
-    refetch,
   }
 }
