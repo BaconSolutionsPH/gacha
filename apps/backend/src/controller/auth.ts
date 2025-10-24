@@ -5,9 +5,16 @@ import { createPublicClient, Hex, http } from "viem";
 import jwt from 'jsonwebtoken';
 import { envConfig } from "@/lib/environment";
 import { UserModel } from "@/models/user";
-interface GenerateNonceResponse {
-    nonce: string
-}
+export const GenerateNonceResponse = t.Object({
+    nonce: t.String()
+})
+export const GetNonceSchema = t.Object({
+    address: t.String(),
+})
+export const BadRequestResponseSchema = t.Object({
+    message: t.String()
+})
+
 export const LoginRequestSchema = t.Object({
     address: t.String(),
     message: t.Object({
@@ -67,14 +74,14 @@ export namespace AuthController {
         })
     }
 
-    export const getNonce = async (walletAddress: string): Promise<GenerateNonceResponse> => {
+    export const getNonce = async (walletAddress: string) => {
         const cacheNonce = await serverRedisClient.get(`nonce-${walletAddress}`)
-        if (cacheNonce) return { nonce: cacheNonce }
+        if (cacheNonce) return status(200, { nonce: cacheNonce })
         const generatedNonce = generateNonce()
         await serverRedisClient.setex(`nonce-${walletAddress}`, 60 * 5, generatedNonce)
-        return { nonce: generatedNonce }
+        return status(200, { nonce: generatedNonce })
     }
-
+    
     export const getUser = async (authToken?: string) => {
         if (!authToken) {
             return status(400, { message: 'Authentication token is required.' })
