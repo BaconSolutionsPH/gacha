@@ -4,34 +4,34 @@ import {
   LoginRequestSchema,
   LoginResponseSchema,
   UserSchema,
+  BadRequestResponseSchema,
+  GetNonceSchema,
+  GenerateNonceResponse
 } from "@/controller/auth";
 
 const app = new Elysia()
-  .post("/auth/login", ({ body }) => AuthController.login(body), {
+  .post("/login", ({ body }) => AuthController.login(body), {
     tags: ["Authentication"],
     body: LoginRequestSchema,
     response: {
       200: LoginResponseSchema,
-      400: t.Object({
-        message: t.String(),
-      }),
+      400: BadRequestResponseSchema
     },
   })
   .get(
-    "/auth/nonce",
+    "/nonce",
     async ({ query }) => AuthController.getNonce(query.address),
     {
       tags: ["Authentication"],
-      query: t.Object({
-        address: t.String(),
-      }),
-      response: t.Object({
-        nonce: t.String(),
-      }),
+      query: GetNonceSchema,
+      response: {
+        200: GenerateNonceResponse,
+        400: BadRequestResponseSchema
+      },
     }
   )
   .get(
-    "/auth/me",
+    "/me",
     ({ cookie: { Authentication } }) =>
       AuthController.getUser(Authentication?.value),
     {
@@ -41,9 +41,7 @@ const app = new Elysia()
       }),
       response: {
         200: UserSchema,
-        400: t.Object({
-          message: t.String(),
-        }),
+        400: BadRequestResponseSchema
       },
     }
   );

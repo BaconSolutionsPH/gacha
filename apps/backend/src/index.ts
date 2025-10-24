@@ -21,7 +21,7 @@ new Elysia()
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
     })
-  )
+)
   .use(logger())
   .use(
     await autoload({
