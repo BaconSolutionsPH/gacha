@@ -10,10 +10,13 @@ const evnSchema = z.object({
     SERVER_REDIS_CACHE_URL: z.url(),
     JWT_SECRET: z.string().default('supersecret'),
     DATABASE_URL: z.url(),
-    AWS_ACCESS_KEY: z.string(),
-    AWS_SECRET_ACCESS_KEY: z.string(),
-    BUCKET_NAME: z.string(),
-    CDN_LINK: z.url()
+    BASE_URL: z.string().url().default('http://localhost:3001'),
+    // S3 Configuration (optional for development)
+    AWS_ACCESS_KEY_ID: z.string().optional(),
+    AWS_SECRET_ACCESS_KEY: z.string().optional(),
+    AWS_REGION: z.string().optional(),
+    AWS_S3_BUCKET_NAME: z.string().optional(),
+    AWS_CDN_URL: z.string().url().optional()
 })
 
 export const envConfig = evnSchema.parse(process.env)
