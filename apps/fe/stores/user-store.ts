@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { authApi } from '@/lib/api'
-import type { User, UserState, UserActions, UserStore } from '@/types'
+import type { UserState, UserStore } from '@/types'
 
 const initialState: UserState = {
   user: null,

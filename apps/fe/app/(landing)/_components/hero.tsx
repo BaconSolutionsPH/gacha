@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import React from 'react'
+import HeroSpinCTA from './hero-spin-cta'
 
 export default function Hero() {
   return (
@@ -12,15 +12,7 @@ export default function Hero() {
         </h1>
         <p className="text-muted-foreground text-lg font-medium lg:text-3xl">Spin. Win. Own real graded cards.</p>
       </div>
-      <div className="rounded-2xl bg-gray-100 p-2">
-        <Image
-          src="/assets/images/default-card.webp"
-          alt="Default Card"
-          width={500}
-          height={500}
-          className="rounded-xl"
-        />
-      </div>
+      <HeroSpinCTA />
     </div>
   )
 }
