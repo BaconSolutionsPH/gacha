@@ -13,7 +13,7 @@ export const RegisterSellerRequest = t.Object({
 export const RegisterSellerResponse = t.Object({
     storeName: t.String(),
     walletAddress: t.String(),
-    isVerified: t.Boolean().nullable(),
+    isVerified: t.Boolean(),
     id: t.String(),
     createdAt: t.Date(),
     updatedAt: t.Date(),
@@ -21,8 +21,6 @@ export const RegisterSellerResponse = t.Object({
 export const ApiErrorResponse = t.Object({
     message: t.String(),
 })
-
-
 
 export namespace SellerController {
     export async function registerSeller(newSeller: Omit<typeof sellerSchema.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>) {
