@@ -1,10 +1,9 @@
 
 import { db } from '@/models/db'
-import { sellerSchema, userSchema } from '@/models/schema'
+import { userSchema } from '@/models/schema'
 import { eq } from 'drizzle-orm';
 import { status, t } from 'elysia';
 import { getAddress } from 'viem';
-
 
 export const RegisterSellerRequest = t.Object({
     storeName: t.String(),
@@ -24,10 +23,14 @@ export const ApiErrorResponse = t.Object({
 })
 
 export namespace SellerController {
-    export async function registerSeller(newSeller: Omit<typeof sellerSchema.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>) {
+    export async function registerSeller(newSeller: typeof RegisterSellerRequest['static']) {
         try {
-            const [seller] = await db.insert(sellerSchema).values({
-                ...newSeller,
+            const [seller] = await db.insert(userSchema).values({
+                userType: "seller",
+                sellerMetadata: {
+                    storeName: newSeller.storeName,
+                    isVerified: false
+                },
                 walletAddress: getAddress(newSeller.walletAddress)
             }).returning();
             if (!seller) return status(500, { message: 'Failed to register seller' });

@@ -1,6 +1,6 @@
 import * as p from 'drizzle-orm/pg-core'
 
-interface SellerMetaData {
+export interface SellerMetaData {
     storeName: string,
     isVerified: boolean
 }
