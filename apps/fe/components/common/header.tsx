@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import SignInButton from './sign-in-button'
+import AddCardDialog from './add-card-dialog'
 
 export default function Header() {
   return (
@@ -12,6 +13,7 @@ export default function Header() {
       </Link>
       <div className="flex items-center gap-2">
         <SignInButton />
+        <AddCardDialog />
       </div>
     </header>
   )

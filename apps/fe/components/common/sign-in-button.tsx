@@ -24,7 +24,7 @@ export default function SignInButton() {
   // Show loading state during hydration
   if (!isMounted) {
     return (
-      <Button variant="outline" disabled size="sm" className="border-gray-300">
+      <Button variant="outline" disabled size="sm">
         Loading...
       </Button>
     )
@@ -42,7 +42,7 @@ export default function SignInButton() {
   // If wallet is connected but not authenticated, show sign in button
   if (isConnected) {
     return (
-      <Button variant="outline" onClick={handleSignIn} disabled={isLoading} size="sm" className="border-gray-300">
+      <Button onClick={handleSignIn} disabled={isLoading} size="sm">
         {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>
     )

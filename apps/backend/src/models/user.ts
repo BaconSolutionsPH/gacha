@@ -25,6 +25,7 @@ export namespace UserModel {
         .insert(userSchema)
         .values({
           walletAddress: normalizedAddress,
+          userType: "player", // Default user type for new users
         })
         .returning();
 
