@@ -28,6 +28,21 @@ const config: HardhatUserConfig = {
       apiKey: process.env.ETHERSCAN_API_KEY!,
       enabled: true
     },
+    blockscout: {
+      enabled: true
+    }
+  },
+  chainDescriptors: {
+    84532: {
+      name: "sepolia",
+      blockExplorers: {
+        etherscan: {
+          name: "Etherscan",
+          url: "https://sepolia.basescan.org",
+          apiUrl: "https://api.etherscan.io/v2/api?chainid=84532"
+        }
+      }
+    }
   },
   networks: {
     sepolia: {
