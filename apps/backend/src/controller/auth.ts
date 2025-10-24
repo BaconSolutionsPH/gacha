@@ -81,7 +81,7 @@ export namespace AuthController {
         await serverRedisClient.setex(`nonce-${walletAddress}`, 60 * 5, generatedNonce)
         return status(200, { nonce: generatedNonce })
     }
-
+    
     export const getUser = async (authToken?: string) => {
         if (!authToken) {
             return status(400, { message: 'Authentication token is required.' })
