@@ -1,6 +1,7 @@
 
 import { db } from '@/models/db'
-import { sellerSchema } from '@/models/schema'
+import { sellerSchema, userSchema } from '@/models/schema'
+import { eq } from 'drizzle-orm';
 import { status, t } from 'elysia';
 import { getAddress } from 'viem';
 
