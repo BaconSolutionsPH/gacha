@@ -1,3 +1,5 @@
+// Ethereum and blockchain-related types
+
 interface EthereumProvider {
   request(args: { method: string; params?: any[] }): Promise<any>
   isMetaMask?: boolean
@@ -12,3 +14,5 @@ declare global {
     ethereum?: EthereumProvider
   }
 }
+
+export type { EthereumProvider }

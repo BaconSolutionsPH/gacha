@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-
 import SignInButton from './sign-in-button'
 
 export default function Header() {

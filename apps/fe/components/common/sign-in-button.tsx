@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import { useAuth } from '@/hooks/auth-hooks'
 import { ConnectWallet } from '@coinbase/onchainkit/wallet'
-import { Address, Avatar, Name } from '@coinbase/onchainkit/identity'
 
 export default function SignInButton() {
-  const { login, isLoading, error, user, isConnected, address, logout } = useAuth()
+  const { login, isLoading, user, logout, isConnected } = useAuth()
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    const timer = setTimeout(() => setIsMounted(true), 0)
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleSignIn = async () => {
     try {
@@ -15,43 +21,33 @@ export default function SignInButton() {
     }
   }
 
-  // If user is authenticated, show user info and logout
+  // Show loading state during hydration
+  if (!isMounted) {
+    return (
+      <Button variant="outline" disabled size="sm" className="border-gray-300">
+        Loading...
+      </Button>
+    )
+  }
+
+  // If user is authenticated, show sign out button
   if (user) {
     return (
-      <div className="flex items-center gap-2">
-        <Avatar className="h-6 w-6" />
-        <div className="flex flex-col">
-          <Name className="text-sm font-medium" />
-          <Address className="text-xs text-gray-500" />
-        </div>
-        <Button variant="outline" onClick={logout} size="sm">
-          Sign Out
-        </Button>
-      </div>
+      <Button variant="outline" onClick={logout} size="sm">
+        Sign Out
+      </Button>
     )
   }
 
   // If wallet is connected but not authenticated, show sign in button
-  if (isConnected && address) {
+  if (isConnected) {
     return (
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-6 w-6" />
-          <Address className="text-sm" />
-        </div>
-        <Button onClick={handleSignIn} disabled={isLoading} className="w-full">
-          {isLoading ? 'Signing In...' : 'Sign In'}
-        </Button>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-      </div>
+      <Button variant="outline" onClick={handleSignIn} disabled={isLoading} size="sm" className="border-gray-300">
+        {isLoading ? 'Signing In...' : 'Sign In'}
+      </Button>
     )
   }
 
-  // If wallet is not connected, show connect wallet button
-  return (
-    <ConnectWallet disconnectedLabel="Connect Wallet">
-      <Avatar className="h-6 w-6" />
-      <Name className="text-white" />
-    </ConnectWallet>
-  )
+  // If wallet not connected, show connect wallet button
+  return <ConnectWallet />
 }

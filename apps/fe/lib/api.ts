@@ -1,36 +1,9 @@
+import type { LoginRequest, LoginResponse, NonceResponse, User } from '@/types/api'
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
-export interface LoginRequest {
-  address: string
-  message: {
-    address: string
-    chainId: number
-    domain: string
-    issuedAt: string
-    nonce: string
-    statement: string
-    uri: string
-    version: string
-  }
-  signature: string
-}
-
-export interface LoginResponse {
-  user: {
-    id: string
-    walletAddress: string
-  }
-  token: string
-}
-
-export interface NonceResponse {
-  nonce: string
-}
-
-export interface User {
-  id: string
-  walletAddress: string
-}
+// Re-export types for backward compatibility
+export type { LoginRequest, LoginResponse, NonceResponse, User }
 
 export const authApi = {
   async getNonce(address: string): Promise<NonceResponse> {

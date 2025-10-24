@@ -1,19 +1,11 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useAccount, useSignMessage, useDisconnect } from 'wagmi'
-import { authApi, type LoginRequest, type User } from '@/lib/api'
-
-interface UseAuthReturn {
-  user: User | null
-  isLoading: boolean
-  error: string | null
-  login: () => Promise<void>
-  logout: () => void
-  isConnected: boolean
-  address: string | undefined
-}
+import { authApi } from '@/lib/api'
+import { useUserStore } from '@/stores'
+import type { LoginRequest, UseAuthReturn, UseUserReturn } from '@/types'
 
 export const useAuth = (): UseAuthReturn => {
-  const [user, setUser] = useState<User | null>(null)
+  const { user, setUser, clearUser, setAuthToken, fetchUser, authToken } = useUserStore()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -23,20 +15,13 @@ export const useAuth = (): UseAuthReturn => {
 
   // Check for existing auth token on mount
   useEffect(() => {
-    const token = localStorage.getItem('auth_token')
-    if (token && address) {
-      // Verify token is still valid by fetching user data
-      authApi
-        .getMe(token)
-        .then((userData) => setUser(userData))
-        .catch(() => {
-          localStorage.removeItem('auth_token')
-          setUser(null)
-        })
+    if (authToken && address && !user) {
+      // Fetch user data using stored token
+      fetchUser()
     }
-  }, [address])
+  }, [address, user, fetchUser, authToken])
 
-  const login = useCallback(async () => {
+  const login = async () => {
     if (!address) {
       setError('Please connect your wallet first')
       return
@@ -93,8 +78,8 @@ Issued At: ${issuedAt}`
 
       const response = await authApi.login(loginData)
 
-      // Store token in localStorage
-      localStorage.setItem('auth_token', response.token)
+      // Store token in store and localStorage
+      setAuthToken(response.token)
       setUser(response.user)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'
@@ -103,14 +88,24 @@ Issued At: ${issuedAt}`
     } finally {
       setIsLoading(false)
     }
-  }, [address, signMessageAsync])
+  }
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('auth_token')
-    setUser(null)
+  const logout = () => {
+    // Always clear user session first
+    clearUser() // This will also clear the token from store and localStorage
     setError(null)
-    disconnect()
-  }, [disconnect])
+
+    // Try to disconnect wallet, but don't fail if it doesn't work
+    if (isConnected) {
+      try {
+        disconnect()
+      } catch (err) {
+        console.warn('Failed to disconnect wallet:', err)
+        // User session is already cleared, so logout is successful
+        // User can manually disconnect wallet if needed
+      }
+    }
+  }
 
   return {
     user,
@@ -120,5 +115,32 @@ Issued At: ${issuedAt}`
     logout,
     isConnected,
     address,
+  }
+}
+
+export const useUser = (): UseUserReturn => {
+  const { user, isLoading, error, isAuthenticated, fetchUser, clearUser, authToken } = useUserStore()
+
+  // Auto-fetch user data when component mounts if we have a token
+  useEffect(() => {
+    if (authToken && !user && !isLoading) {
+      fetchUser()
+    }
+  }, [fetchUser, user, isLoading, authToken])
+
+  const refetch = async () => {
+    if (authToken) {
+      await fetchUser()
+    }
+  }
+
+  return {
+    user,
+    isLoading,
+    error,
+    isAuthenticated,
+    fetchUser,
+    clearUser,
+    refetch,
   }
 }
