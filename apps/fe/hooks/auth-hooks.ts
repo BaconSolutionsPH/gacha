@@ -3,6 +3,7 @@ import { useAccount, useSignMessage, useDisconnect } from 'wagmi'
 import { authApi } from '@/lib/api'
 import { useUserStore } from '@/stores'
 import type { LoginRequest, UseAuthReturn } from '@/types'
+import { base } from 'wagmi/chains'
 
 export const useAuth = (): UseAuthReturn => {
   const { user, setUser, clearUser, setAuthToken, fetchUser, authToken } = useUserStore()
@@ -38,7 +39,7 @@ export const useAuth = (): UseAuthReturn => {
       const domain = window.location.host
       const origin = window.location.origin
       const statement = 'Sign in with Ethereum to the app.'
-      const chainId = 84532 // Base Sepolia chain ID
+      const chainId = base.id // Base Sepolia chain ID
       const issuedAt = new Date().toISOString()
 
       const message = {

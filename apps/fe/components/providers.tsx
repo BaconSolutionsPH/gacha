@@ -5,23 +5,30 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { http } from 'viem'
 import { createConfig, WagmiProvider } from 'wagmi'
-import { baseSepolia } from 'wagmi/chains'
+import { base } from 'wagmi/chains'
 import { Toaster } from './ui/sonner'
+import { coinbaseWallet } from 'wagmi/connectors'
 
 const queryClient = new QueryClient()
 
-const config = createConfig({
-  chains: [baseSepolia],
+const wagmiConfig = createConfig({
+  chains: [base],
+  connectors: [
+    coinbaseWallet({
+      appName: 'onchainkit',
+    }),
+  ],
+  ssr: true,
   transports: {
-    [baseSepolia.id]: http(),
+    [base.id]: http(),
   },
 })
 
 export function Providers(props: { children: ReactNode }) {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <OnchainKitProvider apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} chain={baseSepolia}>
+        <OnchainKitProvider apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} chain={base}>
           {props.children}
           <Toaster />
         </OnchainKitProvider>

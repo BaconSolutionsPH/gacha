@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import { useAuth } from '@/hooks/auth-hooks'
-import { ConnectWallet } from '@coinbase/onchainkit/wallet'
+import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet'
+import AddCardDialog from './add-card-dialog'
 
 export default function SignInButton() {
   const { login, isLoading, user, logout, isConnected } = useAuth()
@@ -33,18 +34,25 @@ export default function SignInButton() {
   // If user is authenticated, show sign out button
   if (user) {
     return (
-      <Button variant="outline" onClick={logout} size="sm">
-        Sign Out
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button variant="outline" onClick={logout} size="sm">
+          Sign Out
+        </Button>
+        <AddCardDialog />
+        <Wallet />
+      </div>
     )
   }
 
   // If wallet is connected but not authenticated, show sign in button
   if (isConnected) {
     return (
-      <Button onClick={handleSignIn} disabled={isLoading} size="sm">
-        {isLoading ? 'Signing In...' : 'Sign In'}
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button onClick={handleSignIn} disabled={isLoading} size="sm">
+          {isLoading ? 'Signing In...' : 'Sign In'}
+        </Button>
+        <Wallet />
+      </div>
     )
   }
 
