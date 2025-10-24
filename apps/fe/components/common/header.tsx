@@ -1,7 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Wallet } from '@coinbase/onchainkit/wallet'
+import SignInButton from './sign-in-button'
 
 export default function Header() {
   return (
@@ -9,7 +11,9 @@ export default function Header() {
       <Link href="/">
         <Image src="/assets/svgs/logo.svg" alt="CapsuleX" width={118} height={28} />
       </Link>
-      <Wallet />
+      <div className="flex items-center gap-2">
+        <SignInButton />
+      </div>
     </header>
   )
 }
