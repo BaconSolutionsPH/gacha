@@ -22,6 +22,7 @@ new Elysia()
       allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
     })
 )
+  //@ts-ignore
   .use(logger())
   .use(
     await autoload({
