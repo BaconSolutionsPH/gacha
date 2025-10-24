@@ -1,8 +1,8 @@
+import { cors } from "@elysiajs/cors";
+import openapi from "@elysiajs/openapi";
+import { initializeLogger, logger } from "@rasla/logify";
 import { Elysia } from "elysia";
 import { autoload } from "elysia-autoload";
-import { initializeLogger, logger } from "@rasla/logify";
-import openapi from "@elysiajs/openapi";
-import { cors } from "@elysiajs/cors";
 import { envConfig } from "./lib/environment";
 
 initializeLogger({
@@ -20,7 +20,7 @@ new Elysia()
       credentials: true, // Allow cookies/credentials
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-    })
+    }),
   )
   .use(logger())
   .use(
@@ -33,7 +33,7 @@ new Elysia()
         useExport: true,
       },
       ignore: ["**/*.test.ts", "**/*.spec.ts"],
-    })
+    }),
   )
   .use(
     openapi({
@@ -45,12 +45,12 @@ new Elysia()
           version: "1.0.0",
         },
       },
-    })
+    }),
   )
   .get("/", () => "OK", { tags: ["Healthcheck"] })
   .onStart((app) => {
     console.log(
-      `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+      `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
     );
   })
   .listen(3001);

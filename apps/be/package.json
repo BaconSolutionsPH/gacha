@@ -1,7 +1,8 @@
 {
-  "name": "backend",
+  "name": "be",
   "version": "1.0.50",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
@@ -10,22 +11,20 @@
     "@elysiajs/openapi": "^1.4.11",
     "@rasla/logify": "^5.1.1",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.44.6",
+    "drizzle-orm": "^0.44.7",
     "elysia": "latest",
     "elysia-autoload": "^1.7.0",
-    "jose": "^6.1.0",
     "jsonwebtoken": "^9.0.2",
     "postgres": "^3.4.7",
     "siwe": "^3.0.0",
-    "viem": "^2.38.3",
+    "viem": "^2.38.4",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/jsonwebtoken": "^9.0.10",
-    "bun-types": "latest",
-    "drizzle-kit": "^0.31.5"
+    "bun-types": "latest"
   },
   "module": "src/index.js"
 }
