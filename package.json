@@ -23,5 +23,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
+    "viem": "^2.38.4",
+    "wagmi": "^2.18.2"
+  }
 }
