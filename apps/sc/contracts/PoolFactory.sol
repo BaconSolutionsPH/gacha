@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Pool.sol";
 import "./escrow.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract PoolFactory is Ownable {
+contract PoolFactory is Ownable, ReentrancyGuard {
     struct ICreatePool {
         IERC20 token;
         address seller;
@@ -16,7 +17,7 @@ contract PoolFactory is Ownable {
     event PoolCreated(address indexed poolAddress, address indexed escrowAddress);
     constructor() Ownable(msg.sender) { }
 
-    function createPool(ICreatePool memory _poolParams) public returns (address, address) {
+    function createPool(ICreatePool memory _poolParams) public nonReentrant returns (address, address) {
         EscrowManager escrow = new EscrowManager(_poolParams.token, address(this));
         Pool pool = new Pool(_poolParams.token, escrow);
         pool.initialize(

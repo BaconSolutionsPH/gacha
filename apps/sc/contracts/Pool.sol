@@ -3,10 +3,11 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; 
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./escrow.sol";
 
-contract Pool is Ownable {
+contract Pool is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     enum Status {
@@ -54,7 +55,7 @@ contract Pool is Ownable {
         string calldata cardId_,
         uint256 threshold_,
         uint256 baseSpinPrice_
-    ) external onlyFactory {
+    ) external onlyFactory nonReentrant {
         require(status == Status.Pending, "Pool: already initialized");
         seller = seller_;
         cardId = cardId_;
@@ -65,7 +66,7 @@ contract Pool is Ownable {
         emit PoolInitialized(seller_, cardId_, threshold_, baseSpinPrice_);
     }
 
-    function contribute(uint256 amount) external {
+    function contribute(uint256 amount) public nonReentrant {
         require(status == Status.Live, "Pool: not live");
         require(amount > 0, "Pool: zero amount");
 

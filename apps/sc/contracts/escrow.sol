@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract EscrowManager is Ownable {
+contract EscrowManager is Ownable , ReentrancyGuard{
     using SafeERC20 for IERC20;
 
     IERC20 public immutable token;
@@ -21,7 +22,7 @@ contract EscrowManager is Ownable {
         emit PoolAuthorized(pool, true);
     }
 
-    function depositForPool(address pool, uint256 amount) public {
+    function depositForPool(address pool, uint256 amount) public nonReentrant {
         require(pool == poolAddress, "Escrow: pool not authorized");
         require(amount > 0, "Escrow: zero amount");
         token.safeTransferFrom(msg.sender, address(this), amount);

@@ -47,7 +47,7 @@ new Elysia()
         },
       },
     })
-  )
+)
   .get("/", () => "OK", { tags: ["Healthcheck"] })
   .onStart((app) => {
     console.log(
