@@ -35,6 +35,7 @@ describe("Deploy Token & PoolFactory Module", async () => {
             abi: poolFactory.abi,
             functionName: "createPool",
             args: [{
+                owner: wallet.account.address,
                 token: capsulex.address,
                 seller: wallet.account.address,
                 cardId: "test_card_002",
