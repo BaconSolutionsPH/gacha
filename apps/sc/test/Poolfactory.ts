@@ -1,26 +1,47 @@
-import { it, assert, describe } from "node:test";
-import { equal } from 'node:assert'
+import { it, describe } from "node:test";
+import { equal, notEqual } from 'node:assert'
 import hre from "hardhat";
 import PoolFactoryModule from "../ignition/modules/PoolFactory.js";
-import { encodeFunctionData, isAddress, parseEventLogs } from "viem";
-describe("PoolFactory Module", async () => {
+import CapsulexTokenModule from "../ignition/modules/capsulex.js";
+import { encodeFunctionData, getContract, Hex, isAddress, parseEventLogs, parseUnits } from "viem";
+import { parse } from "node:path";
+describe("Deploy Token & PoolFactory Module", async () => {
     const { viem, ignition } = await hre.network.connect({ network: "sepolia" });
     const [wallet] = await viem.getWalletClients();
+    const { capsulex } = await ignition.deploy(CapsulexTokenModule);
     const { poolFactory } = await ignition.deploy(PoolFactoryModule);
-    const publicClient = await viem.getPublicClient();
+    const publicClient = await viem.getPublicClient();  
+    let poolAddress: Hex | undefined, escrowAddress: Hex | undefined;
+    it("Deploy Token", async () => {
+        equal(isAddress(capsulex.address), true);
+        console.log(`Token address: ${capsulex.address}`);
+    })
     it("Create Factory", () => {
         equal(isAddress(poolFactory.address), true);
+    })
+    it("Approve Token to Factory", async () => {
+        const encodedAbi = encodeFunctionData({
+            abi: capsulex.abi,
+            functionName: "approve",
+            args: [poolFactory.address, parseUnits("2000", 18)]
+        })
+        const txHash = await wallet.sendTransaction({
+            data: encodedAbi,
+            to: capsulex.address
+        });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 1 });
+        equal(receipt.status, "success");
     })
     it("Create Pool", async () => {
         const encodedAbi = encodeFunctionData({
             abi: poolFactory.abi,
             functionName: "createPool",
             args: [{
-                token: "0xAF33ADd7918F685B2A82C1077bd8c07d220FFA04",
-                seller: "0x379f8d913A7C39B5d1A538C6B3008edb814edc6C",
+                token: capsulex.address,
+                seller: wallet.account.address,
                 cardId: "test_card_002",
-                threshold: 100000n,
-                baseSpinPrice: 10n
+                threshold: parseUnits("1000", 18),
+                baseSpinPrice: parseUnits("10", 18)
             }]
         })
         const txHash = await wallet.sendTransaction({
@@ -28,9 +49,27 @@ describe("PoolFactory Module", async () => {
             to: poolFactory.address
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 1 });
+        equal(receipt.status, "success");
         const logs = parseEventLogs({ abi: poolFactory.abi, logs: receipt.logs }).find(e => e.eventName === "PoolCreated")
         equal(isAddress(logs?.args.poolAddress ?? ""), true);
         equal(isAddress(logs?.args?.escrowAddress ?? ""), true);
+        console.log("New Pool Created at address:", logs?.args.poolAddress);
+        console.log("Escrow Address:", logs?.args.escrowAddress);
+    }) 
+    it("Contribute to Pool", async () => {
+        notEqual(poolAddress, undefined);
+        notEqual(escrowAddress, undefined);
+        const pool = await hre.artifacts.readArtifact("Pool")
+        const encodedAbi = encodeFunctionData({
+            abi: pool.abi,
+            functionName: "contribute",
+            args: [parseUnits("10", 18)]
+        })
+        const txHash = await wallet.sendTransaction({
+            data: encodedAbi,
+            to: poolFactory.address
+        });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 1 });
+        equal(receipt.status, "success");
     })
-    
 })
