@@ -12,6 +12,6 @@ export const publicClient = createPublicClient({
 export const s3client = new S3Client({
     region: "ap-southeast-1",
     secretAccessKey: envConfig.AWS_SECRET_ACCESS_KEY,
-    accessKeyId: envConfig.AWS_ACCESS_KEY,
-    bucket: envConfig.BUCKET_NAME
+    accessKeyId: envConfig.AWS_ACCESS_KEY_ID,
+    bucket: envConfig.AWS_S3_BUCKET_NAME
 })

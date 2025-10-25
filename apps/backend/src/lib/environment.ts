@@ -11,6 +11,9 @@ const evnSchema = z.object({
     JWT_SECRET: z.string().default('supersecret'),
     DATABASE_URL: z.url(),
     BASE_URL: z.string().url().default('http://localhost:3001'),
+    ADMIN_WALLET_ADDRESS: z.string()
+        .default('')
+        .transform((val) => val ? val.split(',').map(addr => addr.trim()) : []),
     // S3 Configuration (optional for development)
     AWS_ACCESS_KEY_ID: z.string().optional(),
     AWS_SECRET_ACCESS_KEY: z.string().optional(),

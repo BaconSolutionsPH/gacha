@@ -2,6 +2,7 @@ import { db } from "@/models/db";
 import { userSchema } from "./schema";
 import { eq } from "drizzle-orm";
 import { getAddress } from "viem";
+import { envConfig } from "@/lib/environment";
 
 export namespace UserModel {
   export const getUserOrCreateUser = async (walletAddress: string) => {
@@ -20,12 +21,17 @@ export namespace UserModel {
         return userData;
       }
 
+      // Check if wallet is an admin address
+      const isAdmin = envConfig.ADMIN_WALLET_ADDRESS.some(
+        (adminAddr) => adminAddr.toLowerCase() === normalizedAddress.toLowerCase()
+      );
+
       // Create new user if not found
       const [newUser] = await db
         .insert(userSchema)
         .values({
           walletAddress: normalizedAddress,
-          userType: "player", // Default user type for new users
+          userType: isAdmin ? "admin" : "player", // Admin if in list, otherwise player
         })
         .returning();
 

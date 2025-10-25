@@ -1,5 +1,5 @@
 {
-  "id": "0397ce17-490e-4ee4-ae62-75a6285b0c09",
+  "id": "daa37251-944f-4b32-95ff-88daa6bcc576",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -39,6 +39,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "images": {
           "name": "images",
           "type": "jsonb",
@@ -74,12 +80,142 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "cards_sellerId_sellers_id_fk": {
-          "name": "cards_sellerId_sellers_id_fk",
+        "cards_sellerId_users_id_fk": {
+          "name": "cards_sellerId_users_id_fk",
           "tableFrom": "cards",
-          "tableTo": "sellers",
+          "tableTo": "users",
           "columnsFrom": [
             "sellerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pool_prizes": {
+      "name": "pool_prizes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "poolId": {
+          "name": "poolId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cardId": {
+          "name": "cardId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric(18, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rarity": {
+          "name": "rarity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "holdUntilThreshold": {
+          "name": "holdUntilThreshold",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "isClaimed": {
+          "name": "isClaimed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "winnerAddress": {
+          "name": "winnerAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "winnerTransactionId": {
+          "name": "winnerTransactionId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pool_prizes_poolId_pools_id_fk": {
+          "name": "pool_prizes_poolId_pools_id_fk",
+          "tableFrom": "pool_prizes",
+          "tableTo": "pools",
+          "columnsFrom": [
+            "poolId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "pool_prizes_cardId_cards_id_fk": {
+          "name": "pool_prizes_cardId_cards_id_fk",
+          "tableFrom": "pool_prizes",
+          "tableTo": "cards",
+          "columnsFrom": [
+            "cardId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "pool_prizes_winnerTransactionId_spin_transactions_id_fk": {
+          "name": "pool_prizes_winnerTransactionId_spin_transactions_id_fk",
+          "tableFrom": "pool_prizes",
+          "tableTo": "spin_transactions",
+          "columnsFrom": [
+            "winnerTransactionId"
           ],
           "columnsTo": [
             "id"
@@ -105,18 +241,6 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "cardId": {
-          "name": "cardId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "threshold": {
-          "name": "threshold",
-          "type": "numeric(18, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "collectedAmount": {
           "name": "collectedAmount",
           "type": "numeric(18, 2)",
@@ -126,6 +250,18 @@
         },
         "tiers": {
           "name": "tiers",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "escrowTxHash": {
+          "name": "escrowTxHash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "poolAddress": {
+          "name": "poolAddress",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -146,29 +282,15 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "pools_cardId_cards_id_fk": {
-          "name": "pools_cardId_cards_id_fk",
-          "tableFrom": "pools",
-          "tableTo": "cards",
-          "columnsFrom": [
-            "cardId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.sellers": {
-      "name": "sellers",
+    "public.spin_transactions": {
+      "name": "spin_transactions",
       "schema": "",
       "columns": {
         "id": {
@@ -178,24 +300,53 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "storeName": {
-          "name": "storeName",
+        "poolId": {
+          "name": "poolId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amountInUsd": {
+          "name": "amountInUsd",
+          "type": "numeric(18, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tx_hash": {
+          "name": "tx_hash",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "tokenAddress": {
+          "name": "tokenAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "walletAddress": {
           "name": "walletAddress",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "isVerified": {
-          "name": "isVerified",
-          "type": "boolean",
+        "prizeType": {
+          "name": "prizeType",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "default": false
+          "notNull": false
+        },
+        "winningPoints": {
+          "name": "winningPoints",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -213,17 +364,97 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "sellers_walletAddress_unique": {
-          "name": "sellers_walletAddress_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "walletAddress"
-          ]
+      "foreignKeys": {
+        "spin_transactions_poolId_pools_id_fk": {
+          "name": "spin_transactions_poolId_pools_id_fk",
+          "tableFrom": "spin_transactions",
+          "tableTo": "pools",
+          "columnsFrom": [
+            "poolId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "spin_transactions_userId_users_id_fk": {
+          "name": "spin_transactions_userId_users_id_fk",
+          "tableFrom": "spin_transactions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_points": {
+      "name": "user_points",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "points": {
+          "name": "points",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_points_userId_users_id_fk": {
+          "name": "user_points_userId_users_id_fk",
+          "tableFrom": "user_points",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -256,7 +487,8 @@
           "name": "userType",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "'player'"
         },
         "isVerified": {
           "name": "isVerified",
@@ -264,6 +496,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": false
+        },
+        "sellerMetadata": {
+          "name": "sellerMetadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
