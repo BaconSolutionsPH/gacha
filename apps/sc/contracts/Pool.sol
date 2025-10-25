@@ -86,7 +86,7 @@ contract Pool is Ownable, ReentrancyGuard {
         status = Status.Closed;
         emit PoolClosed(collected);
     }
-
+    
     function releasePayout(uint256 amount) external onlyOwner {
         require(status == Status.Closed, "Pool: not closed");
         require(amount > 0 && amount <= collected, "Pool: invalid amount");

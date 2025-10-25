@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract PoolFactory is Ownable, ReentrancyGuard {
     struct ICreatePool {
         IERC20 token;
+        address owner;
         address seller;
         string cardId;
         uint256 threshold;
@@ -21,7 +22,7 @@ contract PoolFactory is Ownable, ReentrancyGuard {
         EscrowManager escrow = new EscrowManager(_poolParams.token, address(this));
         Pool pool = new Pool(_poolParams.token, escrow);
         pool.initialize(
-            address(this),
+            _poolParams.owner,
             _poolParams.seller,
             _poolParams.cardId,
             _poolParams.threshold,
@@ -31,5 +32,4 @@ contract PoolFactory is Ownable, ReentrancyGuard {
         return (address(pool), address(escrow));
     }
 
-    
 }
